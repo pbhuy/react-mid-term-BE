@@ -1,8 +1,17 @@
-const userController = require('../controllers/user.controller');
 const userRoute = require('express').Router();
 
+const userController = require('../controllers/user.controller');
+const { verifyToken } = require('../middlewares/auth');
+const uploader = require('../middlewares/uploader');
+
+userRoute.get('/:id', userController.getUserById);
 userRoute.post('/auth/register', userController.register);
 userRoute.post('/auth/login', userController.login);
-userRoute.put('/update', userController.updateProfile);
+userRoute.put(
+  '/update',
+  verifyToken,
+  uploader.single('avatar'),
+  userController.updateProfile,
+);
 
 module.exports = userRoute;

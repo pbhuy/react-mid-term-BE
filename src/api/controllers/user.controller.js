@@ -2,6 +2,18 @@ const { sendRes, sendErr } = require('../helpers/response');
 const { createAccessToken } = require('../helpers/token');
 const User = require('../models/user.model');
 
+const baseURL = 'http://localhost:3000/images/';
+
+const getUserById = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId);
+    sendRes(res, 200, user, undefined);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const register = async (req, res, next) => {
   try {
     const { first_name, last_name, email, password } = req.body;
@@ -35,17 +47,35 @@ const login = async (req, res, next) => {
     // generate access token
     const access_token = createAccessToken(foundUser);
     res.setHeader('Authorization', access_token);
-    sendRes(res, 200, undefined, 'Login successfully');
+    sendRes(res, 200, access_token, 'Login successfully');
   } catch (error) {
     next(error);
   }
 };
 const updateProfile = async (req, res, next) => {
   try {
-    throw new Error('Hello World');
+    const userId = req.id;
+    const { last_name, first_name, email, region, sex, telephone, DOB } =
+      req.body;
+    const imageURL = req.file ? baseURL + req.file.filename : null;
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        last_name,
+        first_name,
+        email,
+        region,
+        sex,
+        telephone,
+        DOB,
+        avatar: imageURL,
+      },
+      { returnDocument: 'after' },
+    );
+    sendRes(res, 200, user, 'Update profile successfully');
   } catch (error) {
     next(error);
   }
 };
 
-module.exports = { register, login, updateProfile };
+module.exports = { register, login, updateProfile, getUserById };

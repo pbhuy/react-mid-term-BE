@@ -19,17 +19,4 @@ const verifyToken = function (req, res, next) {
   }
 };
 
-const authorizeUserAccess = (req, res, next) => {
-  verifyToken(req, res, () => {
-    if (req.role === 'user') next();
-    else return sendErr(res, { status: 403, message: 'Access denied!' });
-  });
-};
-const adminAccessOnly = (req, res, next) => {
-  verifyToken(req, res, () => {
-    if (req.role === 'admin') next();
-    else return sendErr(res, { status: 403, message: 'Access denied!' });
-  });
-};
-
-module.exports = { adminAccessOnly, authorizeUserAccess, verifyToken };
+module.exports = { verifyToken };

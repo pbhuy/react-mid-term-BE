@@ -5,20 +5,21 @@ const saltRounds = 10;
 const userSchema = new Schema(
   {
     first_name: { type: String, required: [true, 'First name required'] },
-    last_name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    last_name: { type: String, required: [true, 'Last name required'] },
+    email: { type: String, required: [true, 'Email required'], unique: true },
+    password: { type: String },
     region: String,
     sex: {
       type: String,
       enum: ['Male', 'Female'],
     },
     telephone: String,
-    date_of_birth: Date,
+    DOB: String,
     avatar: String,
   },
   {
     timestamps: true,
+    versionKey: false,
   },
 );
 
