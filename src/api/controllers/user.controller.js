@@ -1,6 +1,7 @@
 const { sendRes, sendErr } = require('../helpers/response');
 const { createAccessToken } = require('../helpers/token');
 const User = require('../models/user.model');
+const cloudinary = require('../../config/cloudianry');
 
 const baseURL = 'http://localhost:3000/images/';
 
@@ -13,7 +14,6 @@ const getUserById = async (req, res, next) => {
     next(error);
   }
 };
-
 const register = async (req, res, next) => {
   try {
     const { first_name, last_name, email, password } = req.body;
@@ -54,10 +54,12 @@ const login = async (req, res, next) => {
 };
 const updateProfile = async (req, res, next) => {
   try {
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'avatar',
+    });
     const userId = req.id;
     const { last_name, first_name, email, region, sex, telephone, DOB } =
       req.body;
-    const imageURL = req.file ? baseURL + req.file.filename : null;
     const user = await User.findByIdAndUpdate(
       userId,
       {
@@ -68,7 +70,7 @@ const updateProfile = async (req, res, next) => {
         sex,
         telephone,
         DOB,
-        avatar: imageURL,
+        avatar: result.url,
       },
       { returnDocument: 'after' },
     );
