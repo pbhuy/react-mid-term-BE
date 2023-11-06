@@ -23,16 +23,6 @@ const userSchema = new Schema(
   },
 );
 
-userSchema.pre('save', async function (next) {
-  try {
-    const salt = await bcrypt.genSalt(saltRounds);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
-
 userSchema.method('verifyPassword', async function (inputPassword) {
   const result = await bcrypt.compare(inputPassword, this.password);
   return result;

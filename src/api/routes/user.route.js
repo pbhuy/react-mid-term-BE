@@ -7,6 +7,7 @@ const uploader = require('../middlewares/uploader');
 userRoute.get('/:id', userController.getUserById);
 userRoute.post('/auth/register', userController.register);
 userRoute.post('/auth/login', userController.login);
+userRoute.patch('/auth/reset', verifyToken, userController.resetPassword);
 userRoute.put(
   '/update',
   verifyToken,

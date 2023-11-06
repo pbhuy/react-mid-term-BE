@@ -1,14 +1,32 @@
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
 const { sendRes, sendErr } = require('../helpers/response');
 const { createAccessToken } = require('../helpers/token');
 const User = require('../models/user.model');
 const cloudinary = require('../../config/cloudianry');
 
-const baseURL = 'http://localhost:3000/images/';
-
 const getUserById = async (req, res, next) => {
   try {
     const userId = req.params.id;
     const user = await User.findById(userId);
+    sendRes(res, 200, user, undefined);
+  } catch (error) {
+    next(error);
+  }
+};
+const resetPassword = async (req, res, next) => {
+  try {
+    const userId = req.id;
+    const { password } = req.body;
+    // hash password
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { password: hashedPassword },
+      { returnDocument: 'after' },
+    );
     sendRes(res, 200, user, undefined);
   } catch (error) {
     next(error);
@@ -21,8 +39,16 @@ const register = async (req, res, next) => {
     const foundUser = await User.findOne({ email });
     if (foundUser)
       return sendErr(res, { status: 409, message: 'Email is already exist' });
+    // hash password
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = new User({ first_name, last_name, email, password });
+    const user = new User({
+      first_name,
+      last_name,
+      email,
+      password: hashedPassword,
+    });
     await user.save();
 
     const access_token = createAccessToken(user);
@@ -54,9 +80,11 @@ const login = async (req, res, next) => {
 };
 const updateProfile = async (req, res, next) => {
   try {
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      folder: 'avatar',
-    });
+    let result;
+    if (req.file)
+      result = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'avatar',
+      });
     const userId = req.id;
     const { last_name, first_name, email, region, sex, telephone, DOB } =
       req.body;
@@ -70,14 +98,15 @@ const updateProfile = async (req, res, next) => {
         sex,
         telephone,
         DOB,
-        avatar: result.url,
+        avatar: result && result.url,
       },
       { returnDocument: 'after' },
-    );
+    ).lean();
+    delete user.password;
     sendRes(res, 200, user, 'Update profile successfully');
   } catch (error) {
     next(error);
   }
 };
 
-module.exports = { register, login, updateProfile, getUserById };
+module.exports = { register, login, updateProfile, getUserById, resetPassword };
