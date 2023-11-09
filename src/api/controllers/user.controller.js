@@ -50,6 +50,7 @@ const register = async (req, res, next) => {
       password: hashedPassword,
     });
     await user.save();
+    user.password = undefined;
 
     const access_token = createAccessToken(user);
     res.setHeader('Authorization', access_token);

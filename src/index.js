@@ -8,12 +8,13 @@ const router = require('./api/routes');
 const { sendErr } = require('./api/helpers/response');
 
 const app = express();
+const port = process.env.PORT || 8080;
 
 connection();
 
 // cors
 const corsOptions = {
-  origin: 'http://localhost:5173',
+  origin: 'http://localhost:3000',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 };
@@ -39,6 +40,6 @@ app.use((err, req, res, next) => {
   sendErr(res, { status, message });
 });
 
-app.listen(3000, () => {
-  console.log(`Server is running on port ${3000}`);
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
