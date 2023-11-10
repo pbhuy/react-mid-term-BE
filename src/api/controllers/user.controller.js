@@ -6,6 +6,14 @@ const { createAccessToken } = require('../helpers/token');
 const User = require('../models/user.model');
 const cloudinary = require('../../config/cloudianry');
 
+const getUsers = async (req, res, next) => {
+  try {
+    const users = await User.find();
+    sendRes(res, 200, users, undefined);
+  } catch (error) {
+    next(error);
+  }
+};
 const getUserById = async (req, res, next) => {
   try {
     const userId = req.params.id;
@@ -110,4 +118,11 @@ const updateProfile = async (req, res, next) => {
   }
 };
 
-module.exports = { register, login, updateProfile, getUserById, resetPassword };
+module.exports = {
+  register,
+  login,
+  updateProfile,
+  getUserById,
+  getUsers,
+  resetPassword,
+};

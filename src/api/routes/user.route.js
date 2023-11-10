@@ -4,6 +4,7 @@ const userController = require('../controllers/user.controller');
 const { verifyToken } = require('../middlewares/auth');
 const uploader = require('../middlewares/uploader');
 
+userRoute.get('/', userController.getUsers);
 userRoute.get('/:id', userController.getUserById);
 userRoute.post('/auth/register', userController.register);
 userRoute.post('/auth/login', userController.login);

@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-// const morgan = require('morgan');
+const morgan = require('morgan');
 
 const connection = require('./config/database');
 const router = require('./api/routes');
@@ -9,6 +9,8 @@ const { sendErr } = require('./api/helpers/response');
 
 const app = express();
 const port = process.env.PORT || 8080;
+
+connection();
 
 // cors
 const corsOptions = {
@@ -26,14 +28,14 @@ app.use(express.json());
 app.use('/images', express.static(path.join(__dirname, '/uploads')));
 
 // logger
-// app.use(morgan('dev'));
+app.use(morgan('dev'));
 
 // routes
 app.use('/api', router);
 
 // welcome
 app.get('/', (req, res) => {
-  res.send('API IS NOW WORKING');
+  res.send('<h1 style="text-align:center">Welcome to react-mid-term-api</h1>');
 });
 
 // handle errors
@@ -43,8 +45,6 @@ app.use((err, req, res, next) => {
   sendErr(res, { status, message });
 });
 
-connection().then(
-  app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-  }),
-);
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
