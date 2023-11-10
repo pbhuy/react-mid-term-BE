@@ -31,6 +31,11 @@ app.use('/images', express.static(path.join(__dirname, '/uploads')));
 // routes
 app.use('/api', router);
 
+// welcome
+app.get('/', (req, res) => {
+  res.send('API IS NOW WORKING');
+});
+
 // handle errors
 app.use((err, req, res, next) => {
   const status = err.status ? err.status : 500;
