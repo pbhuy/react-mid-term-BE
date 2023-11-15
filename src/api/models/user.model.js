@@ -1,11 +1,10 @@
 const { Schema, model } = require('mongoose');
 const bcrypt = require('bcrypt');
-const saltRounds = 10;
 
 const userSchema = new Schema(
   {
-    first_name: { type: String, required: [true, 'First name required'] },
-    last_name: { type: String, required: [true, 'Last name required'] },
+    first_name: String,
+    last_name: String,
     email: { type: String, required: [true, 'Email required'], unique: true },
     password: { type: String },
     region: String,
