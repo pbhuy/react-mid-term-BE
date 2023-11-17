@@ -14,6 +14,14 @@ const getUsers = async (req, res, next) => {
     next(error);
   }
 };
+const deleteUsers = async (req, res, next) => {
+  try {
+    await User.deleteMany({});
+    sendRes(res, 204, undefined, undefined);
+  } catch (error) {
+    next(error);
+  }
+};
 const getUserById = async (req, res, next) => {
   try {
     const userId = req.params.id;
@@ -74,11 +82,14 @@ const login = async (req, res, next) => {
     // check if user not exist
     const foundUser = await User.findOne({ email });
     if (!foundUser)
-      return sendErr(res, { status: 400, message: 'User not found' });
+      return sendErr(res, { status: 400, message: 'Email is not exist' });
     // check password
     const isVerified = await foundUser.verifyPassword(password);
     if (!isVerified)
-      return sendErr(res, { status: 400, message: 'Incorrect password' });
+      return sendErr(res, {
+        status: 400,
+        message: 'Incorrect email or password',
+      });
     // generate access token
     const access_token = createAccessToken(foundUser);
     res.setHeader('Authorization', access_token);
@@ -125,4 +136,5 @@ module.exports = {
   getUserById,
   getUsers,
   resetPassword,
+  deleteUsers,
 };

@@ -15,5 +15,6 @@ userRoute.put(
   uploader.single('avatar'),
   userController.updateProfile,
 );
+userRoute.delete('/', userController.deleteUsers);
 
 module.exports = userRoute;

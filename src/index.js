@@ -17,6 +17,7 @@ const corsOptions = {
   origin: '*',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
+  exposedHeaders: 'Authorization',
 };
 app.use(cors(corsOptions));
 
