@@ -93,7 +93,9 @@ const login = async (req, res, next) => {
     // generate access token
     const access_token = createAccessToken(foundUser);
     res.setHeader('Authorization', access_token);
-    sendRes(res, 200, access_token, 'Login successfully');
+    const user = foundUser.toObject();
+    user.token = access_token;
+    sendRes(res, 200, user, 'Login successfully');
   } catch (error) {
     next(error);
   }
